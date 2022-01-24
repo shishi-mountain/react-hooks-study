@@ -1,24 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Counter from "./components/counter/Counter";
+import "./App.css";
+// import InputForm from "./components/InputForm";
+import ItemList from "./components/ItemList/ItemList";
 
 function App() {
+  const [isDisplay, setIsDisplay] = React.useState(true);
+  const handleDisplay = () => {
+    setIsDisplay(!isDisplay);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2>#2 userEffect</h2>
+      {/* <button onClick={() => handleDisplay()}>
+        {isDisplay ? "コンポーネント非表示" : "コンポーネント表示"}
+      </button> */}
+      {/* {isDisplay && <Counter />} */}
+      <ItemList />
     </div>
   );
 }
