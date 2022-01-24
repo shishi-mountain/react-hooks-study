@@ -1,42 +1,60 @@
-import React, { useState, useCallback } from "react";
-import "./App.scss";
-import SubTitle from "./components/subTitle/SubTitle";
+import React, { useState } from "react";
+import classes from "./App.module.scss";
 import Title from "./components/Title/Title";
-import Button from "./components/button/Button";
-import Counter from "./components/counter/Counter";
+import { useAutoResize } from "./hooks/index";
 
-function App() {
-  const [countA, setCountA] = useState<number>(0);
-  const [countB, setCountB] = useState<number>(0);
+const App = () => {
+  // 画面表示するitem一覧の値を管理
+  const [itemList, setItemList] = useState<string[]>([]);
+  const [value, setValue] = useState<string>("");
 
-  // React.memoの中では、違う関数だと認識される
-  // useCallbackでmemo化
-  const handleCountUpA = useCallback(() => {
-    setCountA((prevCount) => prevCount + 1);
-  }, []);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setItemList([...itemList, value]);
+    setValue("");
+  };
 
-  const handleCountUpB = useCallback(() => {
-    setCountB((prevCount) => prevCount + 1);
-  }, []);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+  };
 
-  console.log("-----------");
+  const textareaRef = useAutoResize(value);
 
   return (
-    <div className="App">
-      <Title titleText={"#7 useCallback"} />
-      <SubTitle subTitleText={"あなたは犬派？それとも猫派？"} />
-      <div className="itemList">
-        <div className="item">
-          <Counter counterTitle={"犬派"} count={countA} />
-          <Button buttonText={"もちろん犬派"} onClick={handleCountUpA} />
+    <div className={classes.app}>
+      <Title titleText={"#9 useRef"} />
+      <div className={classes.content}>
+        <div className={classes.itemlist}>
+          {itemList.length === 0 ? (
+            <h3>NO ITEMS!!!</h3>
+          ) : (
+            <ul className={classes.ul}>
+              {itemList.map((item) => {
+                return (
+                  <li className={classes.li} key={item}>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
-        <div className="item">
-          <Counter counterTitle={"猫派"} count={countB} />
-          <Button buttonText={"やっぱり猫派"} onClick={handleCountUpB} />
-        </div>
+        <form
+          action=""
+          className={classes.form}
+          onSubmit={(e) => handleSubmit(e)}
+        >
+          <textarea
+            value={value}
+            onChange={(e) => handleChange(e)}
+            className={classes.textarea}
+            ref={textareaRef}
+          />
+          <button className={classes.button}>送信する</button>
+        </form>
       </div>
     </div>
   );
-}
+};
 
 export default App;

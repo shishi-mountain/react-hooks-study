@@ -5,8 +5,7 @@ type Props = {
 };
 
 const Title: React.VFC<Props> = React.memo(({ titleText }) => {
-  console.log("title");
-  return <h2>{titleText}</h2>;
+  return <h3>{titleText}</h3>;
 });
 
 export default Title;
