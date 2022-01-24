@@ -1,64 +1,60 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import classes from "./App.module.scss";
 import Title from "./components/Title/Title";
+import { useAutoResize } from "./hooks/index";
 
 const App = () => {
-  const [count, setCount] = useState<number>(1);
-  const [userName, setUserName] = useState<string>("");
-
-  // const exponentiation = heavyExponentiationFunction(count);
-  const exponentiation = useMemo(() => {
-    heavyExponentiationFunction(count);
-  }, [count]);
+  // 画面表示するitem一覧の値を管理
+  const [itemList, setItemList] = useState<string[]>([]);
+  const [value, setValue] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (userName === "") {
-      alert("ユーザ名を入力してください");
-    } else {
-      alert(`ユーザ名：${userName}`);
-      setUserName("");
-    }
+    setItemList([...itemList, value]);
+    setValue("");
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+  };
+
+  const textareaRef = useAutoResize(value);
+
   return (
     <div className={classes.app}>
-      <Title titleText={"#8 useMemo"} />
+      <Title titleText={"#9 useRef"} />
       <div className={classes.content}>
-        <div className={classes.counter}>
-          <button
-            className={classes.incrementButton}
-            onClick={() => {
-              setCount(count + 1);
-            }}
-          >
-            {count}
-          </button>
-          のべき乗は"{exponentiation}"
+        <div className={classes.itemlist}>
+          {itemList.length === 0 ? (
+            <h3>NO ITEMS!!!</h3>
+          ) : (
+            <ul className={classes.ul}>
+              {itemList.map((item) => {
+                return (
+                  <li className={classes.li} key={item}>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
-        <form className={classes.form} onSubmit={(e) => handleSubmit}>
-          <label className={classes.label}>ユーザ名</label>
-          <input
-            className={classes.input}
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
+        <form
+          action=""
+          className={classes.form}
+          onSubmit={(e) => handleSubmit(e)}
+        >
+          <textarea
+            value={value}
+            onChange={(e) => handleChange(e)}
+            className={classes.textarea}
+            ref={textareaRef}
           />
-          <button className={classes.submitButton} type="submit">
-            送信する
-          </button>
+          <button className={classes.button}>送信する</button>
         </form>
       </div>
     </div>
   );
-};
-
-// 重たい関数
-const heavyExponentiationFunction = (count: number) => {
-  let i = 0;
-  while (i < 10000) {
-    console.log(i);
-    i++;
-  }
-  return count ** 2;
 };
 
 export default App;
