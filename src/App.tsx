@@ -1,42 +1,64 @@
-import React, { useState, useCallback } from "react";
-import "./App.scss";
-import SubTitle from "./components/subTitle/SubTitle";
+import React, { useState, useMemo } from "react";
+import classes from "./App.module.scss";
 import Title from "./components/Title/Title";
-import Button from "./components/button/Button";
-import Counter from "./components/counter/Counter";
 
-function App() {
-  const [countA, setCountA] = useState<number>(0);
-  const [countB, setCountB] = useState<number>(0);
+const App = () => {
+  const [count, setCount] = useState<number>(1);
+  const [userName, setUserName] = useState<string>("");
 
-  // React.memoの中では、違う関数だと認識される
-  // useCallbackでmemo化
-  const handleCountUpA = useCallback(() => {
-    setCountA((prevCount) => prevCount + 1);
-  }, []);
+  // const exponentiation = heavyExponentiationFunction(count);
+  const exponentiation = useMemo(() => {
+    heavyExponentiationFunction(count);
+  }, [count]);
 
-  const handleCountUpB = useCallback(() => {
-    setCountB((prevCount) => prevCount + 1);
-  }, []);
-
-  console.log("-----------");
-
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (userName === "") {
+      alert("ユーザ名を入力してください");
+    } else {
+      alert(`ユーザ名：${userName}`);
+      setUserName("");
+    }
+  };
   return (
-    <div className="App">
-      <Title titleText={"#7 useCallback"} />
-      <SubTitle subTitleText={"あなたは犬派？それとも猫派？"} />
-      <div className="itemList">
-        <div className="item">
-          <Counter counterTitle={"犬派"} count={countA} />
-          <Button buttonText={"もちろん犬派"} onClick={handleCountUpA} />
+    <div className={classes.app}>
+      <Title titleText={"#8 useMemo"} />
+      <div className={classes.content}>
+        <div className={classes.counter}>
+          <button
+            className={classes.incrementButton}
+            onClick={() => {
+              setCount(count + 1);
+            }}
+          >
+            {count}
+          </button>
+          のべき乗は"{exponentiation}"
         </div>
-        <div className="item">
-          <Counter counterTitle={"猫派"} count={countB} />
-          <Button buttonText={"やっぱり猫派"} onClick={handleCountUpB} />
-        </div>
+        <form className={classes.form} onSubmit={(e) => handleSubmit}>
+          <label className={classes.label}>ユーザ名</label>
+          <input
+            className={classes.input}
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+          />
+          <button className={classes.submitButton} type="submit">
+            送信する
+          </button>
+        </form>
       </div>
     </div>
   );
-}
+};
+
+// 重たい関数
+const heavyExponentiationFunction = (count: number) => {
+  let i = 0;
+  while (i < 10000) {
+    console.log(i);
+    i++;
+  }
+  return count ** 2;
+};
 
 export default App;
